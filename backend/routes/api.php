@@ -21,7 +21,6 @@ Route::post('/login', [UserController::class, 'login']);
 Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::get('/permissions', [RolesPermissionsController::class, 'index'])->name('permissions.index');
    Route::resource('projects', ProjectsController::class);
-   Route::resource('tasks', TasksController::class);
    Route::resource('comments', TaskSubmissionsController::class);
    Route::get('/users', [UserController::class, 'index'])->name('users.index');
    Route::post('/users', [UserController::class, 'store'])->name('users.store');
@@ -32,10 +31,12 @@ Route::group(['middleware'=>['auth:sanctum', 'permission']], function(){
    Route::get('/tasks-search', [TasksController::class, 'search'])->name('tasks.search');
    Route::delete('/tasks-archive/{id}', [TasksController::class, 'archive'])->name('tasks.archive');
    Route::get('/tasks-archive', [TasksController::class, 'getArchive'])->name('tasks.getArchive');
+   Route::resource('tasks', TasksController::class);
 
 
    Route::get('/projects-search', [TasksController::class, 'search'])->name('projects.search');
 
   
 });
+
 Route::get('/files/{files}', [TaskSubmissionsController::class, 'showFiles'])->name("show.files");

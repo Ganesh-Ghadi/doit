@@ -11,6 +11,7 @@ import Projects from './pages/Projects/Projects';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Error from './components/Error/Error';
+import CreateProject from './pages/Projects/CreateProject';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -40,6 +41,7 @@ const App = () => {
         >
           <Route index element={<Homepage />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/add" element={<CreateProject />} />
         </Route>
         <Route errorElement={<Error />} path="/login" element={<Login />} />
         <Route

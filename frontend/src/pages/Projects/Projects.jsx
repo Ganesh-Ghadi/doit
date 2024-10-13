@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Projects = () => {
   return (
@@ -6,6 +7,15 @@ const Projects = () => {
       <div className=" relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="flex p-5 flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
           <div>
+            <Link to="/projects/add">
+              <button
+                type="button"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                Add Project
+              </button>
+            </Link>
+
             <button
               id="dropdownRadioButton"
               data-dropdown-toggle="dropdownRadio"
@@ -102,7 +112,7 @@ const Projects = () => {
                       htmlFor="filter-radio-example-3"
                       className="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
                     >
-                      Last 30 daysdtt
+                      Last 30 days
                     </label>
                   </div>
                 </li>
