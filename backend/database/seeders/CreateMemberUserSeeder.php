@@ -41,6 +41,7 @@ class CreateMemberUserSeeder extends Seeder
             "comments.update",
             "show.files",
             "user.logout",
+            "projects.store"
         ];
         // $adminRole->givePermissionTo($permissions);
 

@@ -37,7 +37,7 @@ const Sidebar = () => {
       >
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
           <IoIosArrowDropleft
-            className={`absolute  bg-white rounded-full cursor-pointer -right-5 top-9 w-10 h-10 border-2 border-dark-purple ${
+            className={`absolute  bg-white rounded-full cursor-pointer -right-4 top-9 w-9 h-9 border-2 border-dark-purple ${
               !isSidebarOpen && 'rotate-180'
             }`}
           />
@@ -67,7 +67,7 @@ const Sidebar = () => {
                 to={item.path}
               >
                 {' '}
-                <p className="text-3xl">{item.logo}</p>
+                <p className="text-2xl">{item.logo}</p>
                 <p
                   className={`${
                     !isSidebarOpen && 'scale-0'

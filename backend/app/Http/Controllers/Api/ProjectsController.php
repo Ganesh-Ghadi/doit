@@ -26,7 +26,8 @@ class ProjectsController extends BaseController
 
         } elseif($authUser == 'member'){
             // $projects = auth()->user()->projects()->users()->get();  //auth()->user()->projects()->users()->get();   or auth()->user()->projects()->with("users")->get();
-            $user = auth()->user()->projects()->get();  //this is efficient way
+            $projects = auth()->user()->projects()->get();  //this is efficient way 
+            
         }
       
         return $this->sendResponse(['Projects'=> ProjectResource::collection($projects)], "Projects retrived successfuly");
