@@ -4,8 +4,8 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const Projects = () => {
-  const token = "2|eT2K9dkQSSgVI4BNjnce9mI4sHeATgXslfYKcY392db8b011";
-
+ const user = JSON.parse(localStorage.getItem('user'));
+ const token = user.token;
   const {
     data: projects,
     isLoading,

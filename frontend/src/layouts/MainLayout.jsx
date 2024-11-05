@@ -8,6 +8,7 @@ import logo from "../assets/react.svg";
 import { TbLogout2 } from "react-icons/tb";
 import { toast } from "react-toastify";
 import axios from "axios";
+import MemberSidebar from "../components/MemberSidebar/MemberSidebar";
 
 const MainLayout = ({ toggleTheme, darkMode }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,6 +40,7 @@ const MainLayout = ({ toggleTheme, darkMode }) => {
 
   return (
     <>
+     <MemberSidebar/>
       <MobileSidebar
         logout={logout}
         setIsModalOpen={setIsModalOpen}

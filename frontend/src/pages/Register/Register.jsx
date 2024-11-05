@@ -41,7 +41,6 @@ const Register = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Include the Bearer token
           },
         }
       );
