@@ -14,6 +14,8 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import Error from "./components/Error/Error";
 import CreateProject from "./pages/Projects/CreateProject";
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import GuestRoute from "./components/GuestRoute/GuestRoute";
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -39,24 +41,45 @@ const App = () => {
         <Route
           errorElement={<Error />}
           path="/"
-          element={<MainLayout toggleTheme={toggleTheme} darkMode={darkMode} />}
+          element={
+            <ProtectedRoute>
+              <MainLayout toggleTheme={toggleTheme} darkMode={darkMode} />
+            </ProtectedRoute>
+          }
         >
           <Route index element={<Homepage />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/add" element={<CreateProject />} />
         </Route>
-        <Route errorElement={<Error />} path="/login" element={<Login />} />
+        <Route
+          errorElement={<Error />}
+          path="/login"
+          element={
+            <GuestRoute>
+              {" "}
+              <Login />
+            </GuestRoute>
+          }
+        />
         <Route
           errorElement={<Error />}
           path="/register"
-          element={<Register />}
+          element={
+            <GuestRoute>
+              <Register />
+            </GuestRoute>
+          }
         />
       </>
     )
   );
 
-  <ToastContainer />;
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <ToastContainer position="top-center" autoClose={5000} />
+      <RouterProvider router={router} />
+    </>
+  );
 };
 
 export default App;

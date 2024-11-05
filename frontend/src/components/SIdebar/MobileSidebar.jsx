@@ -1,20 +1,28 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FaBars } from 'react-icons/fa';
-import { IoLogoSlack } from 'react-icons/io';
-import { NavLink } from 'react-router-dom';
-import { RxCross1 } from 'react-icons/rx';
-import { FaRegMoon } from 'react-icons/fa';
-import { LuSunMedium } from 'react-icons/lu';
+import React, { useState, useRef, useEffect } from "react";
+import { FaBars } from "react-icons/fa";
+import { IoLogoSlack } from "react-icons/io";
+import { NavLink } from "react-router-dom";
+import { RxCross1 } from "react-icons/rx";
+import { FaRegMoon } from "react-icons/fa";
+import { LuSunMedium } from "react-icons/lu";
+import logo from "../../assets/react.svg";
+import { TbLogout2 } from "react-icons/tb";
 
-const MobileSidebar = ({ darkMode, toggleTheme }) => {
+const MobileSidebar = ({
+  darkMode,
+  toggleTheme,
+  logout,
+  isModalOpen,
+  setIsModalOpen,
+}) => {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const sidebarRef = useRef(null); // Create a ref for the sidebar
 
   const items = [
-    { name: 'Home', path: '/', logo: <IoLogoSlack /> },
-    { name: 'Projects', path: '/projects', logo: <IoLogoSlack /> },
-    { name: 'Services', path: '/services', logo: <IoLogoSlack /> },
-    { name: 'Contact', path: '/contact', logo: <IoLogoSlack /> },
+    { name: "Home", path: "/", logo: <IoLogoSlack /> },
+    { name: "Projects", path: "/projects", logo: <IoLogoSlack /> },
+    { name: "Services", path: "/services", logo: <IoLogoSlack /> },
+    { name: "Contact", path: "/contact", logo: <IoLogoSlack /> },
   ];
 
   const handleBar = () => {
@@ -29,13 +37,13 @@ const MobileSidebar = ({ darkMode, toggleTheme }) => {
     };
 
     if (isMobileSidebarOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isMobileSidebarOpen]);
 
@@ -48,15 +56,37 @@ const MobileSidebar = ({ darkMode, toggleTheme }) => {
           </button>
           <p className=" font-bold">Designer</p>
         </div>
-        <div className=" text-2xl flex justify-end">
+        <div className="text-2xl gap-4 flex justify-end">
           <button
             className="text-dark-purple dark:text-white"
             onClick={() => toggleTheme()}
           >
             {darkMode ? <LuSunMedium /> : <FaRegMoon />}
           </button>
+          <button
+            className="md:hidden  rounded-full"
+            onClick={() => setIsModalOpen(!isModalOpen)}
+          >
+            <img src={logo} alt="logo" />
+          </button>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className="md:hidden">
+          <div className="border text-dark-purple dark:text-white dark:text-white border rounded bg-slate-50 dark:bg-gray-900 w-48 h-16 absolute top-20 right-10 z-50">
+            <button
+              onClick={() => {
+                logout();
+              }}
+              className="m-4 text-sm flex gap-4 items-center"
+            >
+              <TbLogout2 />
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Overlay for the sidebar */}
       {isMobileSidebarOpen && (
@@ -67,7 +97,7 @@ const MobileSidebar = ({ darkMode, toggleTheme }) => {
       <div
         ref={sidebarRef}
         className={`fixed top-0 left-0 min-h-screen w-72 bg-dark-purple z-20 transition-transform duration-300 transform ${
-          isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Start */}
@@ -91,7 +121,7 @@ const MobileSidebar = ({ darkMode, toggleTheme }) => {
               onClick={() => setIsMobileSidebarOpen(false)}
               className={({ isActive }) =>
                 `flex mb-4 p-2 rounded-md hover:bg-light-white items-center gap-4 ${
-                  isActive ? 'bg-light-white' : ''
+                  isActive ? "bg-light-white" : ""
                 }`
               }
               key={index}

@@ -4,8 +4,11 @@ import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const CreateProject = () => {
+  const navigate = useNavigate();
   const formSchema = z.object({
     name: z.string().min(1, "Name field is required"),
     description: z.string().min(1, "Description field is required"),
@@ -35,6 +38,8 @@ const CreateProject = () => {
     },
     onSuccess: (data) => {
       console.log("project created", data);
+      toast.success("Project Added Successfully");
+      navigate("/projects");
     },
     onError: (error) => {
       console.log("got error ", error);
