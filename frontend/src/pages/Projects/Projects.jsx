@@ -1,21 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const Projects = () => {
- const user = JSON.parse(localStorage.getItem('user'));
- const token = user.token;
+  const user = JSON.parse(localStorage.getItem('user'));
+  const token = user.token;
   const {
     data: projects,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["projects"],
+    queryKey: ['projects'],
     queryFn: async () => {
-      const response = await axios.get("http://127.0.0.1:8000/api/projects", {
+      const response = await axios.get('http://127.0.0.1:8000/api/projects', {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`, // Include the Bearer token
         },
       });
@@ -23,11 +23,11 @@ const Projects = () => {
       return response.data.data.Projects;
     },
     onSuccess: (data) => {
-      console.log("the data is ", data);
+      console.log('the data is ', data);
     },
     onError: (error) => {
-      console.log("error = ", error);
-      console.log("error message = ", error.message);
+      console.log('error = ', error);
+      console.log('error message = ', error.message);
     },
   });
 
@@ -83,10 +83,10 @@ const Projects = () => {
               data-popper-escaped=""
               data-popper-placement="top"
               style={{
-                position: "absolute",
-                inset: "auto auto 0px 0px",
-                margin: "0px",
-                transform: "translate3d(522.5px, 3847.5px, 0px)",
+                position: 'absolute',
+                inset: 'auto auto 0px 0px',
+                margin: '0px',
+                transform: 'translate3d(522.5px, 3847.5px, 0px)',
               }}
             >
               <ul
@@ -269,12 +269,12 @@ const Projects = () => {
                     <td className="px-6 py-4">{project.description}</td>
                     <td className="px-6 py-4">Laptop</td>
                     <td className="px-6 py-4">
-                      <a
-                        href="#"
+                      <Link
+                        to={`/projects/${project.id}/edit`}
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
                         Edit
-                      </a>
+                      </Link>
                     </td>
                   </tr>
                 );

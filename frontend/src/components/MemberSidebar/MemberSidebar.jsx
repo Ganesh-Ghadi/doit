@@ -1,16 +1,16 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RxCross1 } from "react-icons/rx";
-import { closeSidebar } from "../../features/MemberSidebarSlice/MemberSidebarSlice";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RxCross1 } from 'react-icons/rx';
+import { closeSidebar } from '../../features/MemberSidebarSlice/MemberSidebarSlice';
 import {
   addMembers,
   removeMembers,
-} from "../../features/MemberSlice/memberSlice";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+} from '../../features/MemberSlice/memberSlice';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 const MemberSidebar = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem('user'));
   const token = user.token;
   const { isOpen } = useSelector((store) => store.MemberSidebar);
   const { members } = useSelector((store) => store.Member);
@@ -22,11 +22,11 @@ const MemberSidebar = () => {
     isError,
     isFetching,
   } = useQuery({
-    queryKey: ["users"],
+    queryKey: ['users'],
     queryFn: async () => {
-      const response = await axios.get("http://127.0.0.1:8000/api/users", {
+      const response = await axios.get('http://127.0.0.1:8000/api/users', {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
       });
@@ -37,8 +37,8 @@ const MemberSidebar = () => {
       console.log(data);
     },
     onError: (error) => {
-      console.log("error = ", error);
-      console.log("error message = ", error.message);
+      console.log('error = ', error);
+      console.log('error message = ', error.message);
     },
   });
 
@@ -56,7 +56,7 @@ const MemberSidebar = () => {
       )}
       <div
         className={` ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+          isOpen ? 'translate-x-0' : 'translate-x-full'
         } fixed z-50 bg-white top-0 right-0  w-96 transition-transform duration-300 ease-in-out min-h-screen`}
       >
         <div className="flex justify-between items-center mt-4 mb-2 mx-4">

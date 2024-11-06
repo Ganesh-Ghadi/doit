@@ -1,19 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import axios from 'axios';
 import { IoIosAddCircleOutline } from 'react-icons/io';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { openSidebar } from '../../features/MemberSidebarSlice/MemberSidebarSlice';
 import { FaRegUser } from 'react-icons/fa';
 import { RxCross1 } from 'react-icons/rx';
 import { removeMembers } from '../../features/MemberSlice/memberSlice';
 
-const CreateProject = () => {
+const EditProject = () => {
+  const { id: projectId } = useParams();
   const dispatch = useDispatch();
   const { isOpen } = useSelector((store) => store.MemberSidebar);
   const { members } = useSelector((store) => store.Member);
@@ -29,14 +30,48 @@ const CreateProject = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     resolver: zodResolver(formSchema),
   });
+
+  const {
+    data: projects,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['editProject'],
+    queryFn: async () => {
+      const response = await axios.get(
+        `http://127.0.0.1:8000/api/projects/${projectId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // Include the Bearer token
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data.data.Projects;
+    },
+    onSuccess: (data) => {
+      console.log('the data is ', data);
+      // Prefill the form with the fetched project data
+      if (data) {
+        setValue('name', data.name); // Prefill the name field
+        setValue('description', data.description); // Prefill the description field
+      } //this onSuccess is not getting called
+    },
+    onError: (error) => {
+      console.log('error = ', error);
+      console.log('error message = ', error.message);
+    },
+  });
+
   const storeMutation = useMutation({
     mutationFn: async (data) => {
-      const response = await axios.post(
-        'http://127.0.0.1:8000/api/projects',
-        data,
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/projects/${projectId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -174,4 +209,4 @@ const CreateProject = () => {
   );
 };
 
-export default CreateProject;
+export default EditProject;

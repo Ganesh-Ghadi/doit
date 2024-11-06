@@ -1,38 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
-} from "react-router-dom";
-import MainLayout from "./layouts/MainLayout";
-import Homepage from "./pages/HomePage/Homepage";
-import Projects from "./pages/Projects/Projects";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
-import Error from "./components/Error/Error";
-import CreateProject from "./pages/Projects/CreateProject";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import GuestRoute from "./components/GuestRoute/GuestRoute";
+} from 'react-router-dom';
+import MainLayout from './layouts/MainLayout';
+import Homepage from './pages/HomePage/Homepage';
+import Projects from './pages/Projects/Projects';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
+import Error from './components/Error/Error';
+import CreateProject from './pages/Projects/CreateProject';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import GuestRoute from './components/GuestRoute/GuestRoute';
+import EditProject from './pages/Projects/EditProject';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
+    const storedTheme = localStorage.getItem('theme');
     if (storedTheme) {
-      setDarkMode(storedTheme === "dark");
-      document.documentElement.classList.toggle("dark", storedTheme === "dark");
+      setDarkMode(storedTheme === 'dark');
+      document.documentElement.classList.toggle('dark', storedTheme === 'dark');
     }
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = darkMode ? "light" : "dark";
+    const newTheme = darkMode ? 'light' : 'dark';
     setDarkMode(!darkMode);
-    document.documentElement.classList.toggle("dark", newTheme === "dark");
-    localStorage.setItem("theme", newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    localStorage.setItem('theme', newTheme);
   };
 
   const router = createBrowserRouter(
@@ -50,13 +51,14 @@ const App = () => {
           <Route index element={<Homepage />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/add" element={<CreateProject />} />
+          <Route path="/projects/:id/edit" element={<EditProject />} />
         </Route>
         <Route
           errorElement={<Error />}
           path="/login"
           element={
             <GuestRoute>
-              {" "}
+              {' '}
               <Login />
             </GuestRoute>
           }
