@@ -14,6 +14,7 @@ const MemberSidebarSlice = createSlice({
     closeSidebar: (state, action) => {
       state.isOpen = false;
     },
+    
   },
 });
 
