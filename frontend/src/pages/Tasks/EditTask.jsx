@@ -16,15 +16,15 @@ import {
 } from "../../features/MemberSlice/memberSlice";
 import { useEffect } from "react";
 
-const EditProject = () => {
-  const { id: projectId } = useParams();
+const EditTask = () => {
+  const { id: taskId } = useParams();
   const dispatch = useDispatch();
   const { members } = useSelector((store) => store.Member);
   const user = JSON.parse(localStorage.getItem("user"));
   const token = user.token;
   const navigate = useNavigate();
   const formSchema = z.object({
-    name: z.string().min(1, "Name field is required"),
+    title: z.string().min(1, "Title field is required"),
     description: z.string().min(1, "Description field is required"),
   });
 
@@ -36,16 +36,16 @@ const EditProject = () => {
   } = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "", // Default empty string
+      title: "", // Default empty string
       description: "", // Default empty string
     },
   });
 
   const { data, isLoading, isError, isSuccess } = useQuery({
-    queryKey: ["editProject", projectId],
+    queryKey: ["editTask", taskId],
     queryFn: async () => {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/projects/${projectId}`,
+        `http://127.0.0.1:8000/api/tasks/${taskId}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -55,9 +55,9 @@ const EditProject = () => {
       );
 
       console.log("Response data:", response.data); // Log response data
-      setValue("name", response.data.data.Projects.name || "");
-      setValue("description", response.data.data.Projects.description || "");
-      dispatch(addMembers(response?.data?.data?.Projects?.users));
+      setValue("title", response.data.data.Task.title || "");
+      setValue("description", response.data.data.Task.description || "");
+      dispatch(addMembers(response?.data?.data?.Task?.assign_to));
 
       return response.data;
     },
@@ -79,7 +79,7 @@ const EditProject = () => {
   const updateMutation = useMutation({
     mutationFn: async (data) => {
       const response = await axios.put(
-        `http://127.0.0.1:8000/api/projects/${projectId}`,
+        `http://127.0.0.1:8000/api/tasks/${taskId}`,
         data,
         {
           headers: {
@@ -91,9 +91,9 @@ const EditProject = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("project created", data);
-      toast.success("Project Added Successfully");
-      navigate("/projects");
+      console.log("task created", data);
+      toast.success("Task Added Successfully");
+      navigate("/tasks");
     },
     onError: (error) => {
       console.log("got error ", error);
@@ -101,11 +101,11 @@ const EditProject = () => {
   });
 
   const onSubmit = (data) => {
-    const users = members.map((member) => member.id);
+    const assign_to = members.map((member) => member.id);
 
     const projectData = {
       ...data,
-      users,
+      assign_to,
     };
     updateMutation.mutate(projectData);
   };
@@ -119,10 +119,10 @@ const EditProject = () => {
               htmlFor="default-input"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Project Name
+              Task Name
             </label>
             <Controller
-              name="name"
+              name="title"
               control={control}
               render={({ field }) => (
                 <input
@@ -134,7 +134,9 @@ const EditProject = () => {
               )}
             />
             {errors.name && (
-              <p className="text-red-500 text-sm mt-2">{errors.name.message}</p>
+              <p className="text-red-500 text-sm mt-2">
+                {errors.title.message}
+              </p>
             )}
           </div>
           <div className="mb-6">
@@ -142,7 +144,7 @@ const EditProject = () => {
               htmlFor="default-input"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Project Description
+              Task Description
             </label>
             <Controller
               name="description"
@@ -165,7 +167,7 @@ const EditProject = () => {
               htmlFor="default-input"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Assign Project
+              Assign Task
             </label>
             <button
               onClick={() => {
@@ -219,4 +221,4 @@ const EditProject = () => {
   );
 };
 
-export default EditProject;
+export default EditTask;

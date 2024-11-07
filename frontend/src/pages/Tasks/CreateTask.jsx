@@ -16,15 +16,14 @@ import {
   refreshMembers,
 } from "../../features/MemberSlice/memberSlice";
 
-const CreateProject = () => {
+const CreateTask = () => {
   const dispatch = useDispatch();
-  const { isOpen } = useSelector((store) => store.MemberSidebar);
   const { members } = useSelector((store) => store.Member);
   const user = JSON.parse(localStorage.getItem("user"));
   const token = user.token;
   const navigate = useNavigate();
   const formSchema = z.object({
-    name: z.string().min(1, "Name field is required"),
+    title: z.string().min(1, "title field is required"),
     description: z.string().min(1, "Description field is required"),
   });
 
@@ -38,7 +37,7 @@ const CreateProject = () => {
   const storeMutation = useMutation({
     mutationFn: async (data) => {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/projects",
+        "http://127.0.0.1:8000/api/tasks",
         data,
         {
           headers: {
@@ -50,10 +49,10 @@ const CreateProject = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      console.log("project created", data);
+      console.log("task created", data);
       dispatch(refreshMembers());
-      toast.success("Project Added Successfully");
-      navigate("/projects");
+      toast.success("Task Added Successfully");
+      navigate("/tasks");
     },
     onError: (error) => {
       console.log("got error ", error);
@@ -61,13 +60,13 @@ const CreateProject = () => {
   });
 
   const onSubmit = (data) => {
-    const users = members.map((member) => member.id);
+    const assign_to = members.map((member) => member.id);
 
-    const projectData = {
+    const taskData = {
       ...data,
-      users,
+      assign_to,
     };
-    storeMutation.mutate(projectData);
+    storeMutation.mutate(taskData);
   };
 
   useEffect(() => {
@@ -83,10 +82,10 @@ const CreateProject = () => {
               for="default-input"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Project Name
+              Task title
             </label>
             <Controller
-              name="name"
+              name="title"
               control={control}
               render={({ field }) => (
                 <input
@@ -97,8 +96,8 @@ const CreateProject = () => {
                 />
               )}
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-2">{errors.name.message}</p>
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-2">{errors.title.message}</p>
             )}
           </div>
           <div class="mb-6">
@@ -106,7 +105,7 @@ const CreateProject = () => {
               for="default-input"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Project Description
+              Task Description
             </label>
             <Controller
               name="description"
@@ -129,7 +128,7 @@ const CreateProject = () => {
               for="default-input"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Assign Project
+              Assign Task
             </label>
             <button
               onClick={() => {
@@ -183,4 +182,4 @@ const CreateProject = () => {
   );
 };
 
-export default CreateProject;
+export default CreateTask;

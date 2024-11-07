@@ -11,16 +11,24 @@ const MemberSlice = createSlice({
   initialState,
   reducers: {
     addMembers: (state, action) => {
-      state.members = [...state.members, ...action.payload]; // Add new members to the existing array
+      const existingMemberIds = state.members.map((member) => member.id);
+      const uniqueNewMembers = action.payload.filter(
+        (member) => !existingMemberIds.includes(member.id)
+      );
+      state.members = [...state.members, ...uniqueNewMembers];
     },
     removeMembers: (state, action) => {
       state.members = state.members.filter(
         (member) => member.id !== action.payload.id
       );
     },
+    refreshMembers: (state, action) => {
+      state.members = []; // Add new members to the existing array
+    },
   },
 });
 
-export const { addMembers, removeMembers } = MemberSlice.actions;
+export const { addMembers, removeMembers, refreshMembers } =
+  MemberSlice.actions;
 
 export default MemberSlice.reducer;

@@ -17,6 +17,11 @@ const Sidebar = () => {
       logo: <IoLogoSlack />,
     },
     {
+      name: "Tasks",
+      path: "/tasks",
+      logo: <IoLogoSlack />,
+    },
+    {
       name: "Services",
       path: "/services",
       logo: <IoLogoSlack />,

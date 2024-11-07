@@ -30,7 +30,7 @@ const MemberSidebar = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
+      // console.log(response.data);
       return response.data.data.Users;
     },
     onSuccess: (data) => {

@@ -4,25 +4,25 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const Projects = () => {
+const Tasks = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = user.token;
   const queryClient = useQueryClient();
   const {
-    data: projects,
+    data: tasks,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["projects"],
+    queryKey: ["tasks"],
     queryFn: async () => {
-      const response = await axios.get("http://127.0.0.1:8000/api/projects", {
+      const response = await axios.get("http://127.0.0.1:8000/api/tasks", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`, // Include the Bearer token
         },
       });
       console.log(response.data);
-      return response.data.data.Projects;
+      return response.data.data.Task;
     },
     onSuccess: (data) => {
       console.log("the data is ", data);
@@ -36,7 +36,7 @@ const Projects = () => {
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
       const response = await axios.delete(
-        `http://127.0.0.1:8000/api/projects/${id}`,
+        `http://127.0.0.1:8000/api/tasks/${id}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -48,15 +48,15 @@ const Projects = () => {
     },
     onSuccess: (data) => {
       console.log(data);
-      toast.success("project deleted successfully");
-      queryClient.invalidateQueries("projects");
+      toast.success("Task deleted successfully");
+      queryClient.invalidateQueries("tasks");
     },
     onError: (error) => {
       console.log("error = ", error);
     },
   });
 
-  const deleteProject = (id) => {
+  const deleteTask = (id) => {
     deleteMutation.mutate(id);
   };
 
@@ -65,12 +65,12 @@ const Projects = () => {
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <div className="flex p-5 flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4">
           <div>
-            <Link to="/projects/add">
+            <Link to="/tasks/add">
               <button
                 type="button"
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
               >
-                Add Project
+                Add Task
               </button>
             </Link>
             <button
@@ -253,7 +253,7 @@ const Projects = () => {
                 </div>
               </th>
               <th scope="col" className="px-6 py-3">
-                Project Name
+                Task Name
               </th>
               <th scope="col" className="px-6 py-3">
                 Description
@@ -267,11 +267,11 @@ const Projects = () => {
             </tr>
           </thead>
           <tbody>
-            {projects &&
-              projects.map((project) => {
+            {tasks &&
+              tasks.map((task) => {
                 return (
                   <tr
-                    key={project.id}
+                    key={task.id}
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                   >
                     <td className="w-4 p-4">
@@ -293,20 +293,20 @@ const Projects = () => {
                       scope="row"
                       className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
-                      {project.name}
+                      {task.title}
                     </th>
-                    <td className="px-6 py-4">{project.description}</td>
+                    <td className="px-6 py-4">{task.description}</td>
                     <td className="px-6 py-4">Laptop</td>
                     <td className="px-6 py-4">
                       <Link
-                        to={`/projects/${project.id}/edit`}
+                        to={`/tasks/${task.id}/edit`}
                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                       >
                         Edit
                       </Link>{" "}
                       <button
                         onClick={() => {
-                          deleteProject(project.id);
+                          deleteTask(task.id);
                         }}
                         type="button"
                         className="text-red-500"
@@ -324,4 +324,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Tasks;

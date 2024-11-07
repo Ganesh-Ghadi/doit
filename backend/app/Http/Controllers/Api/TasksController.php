@@ -27,7 +27,7 @@ class TasksController extends BaseController
 
         }
            //should we give only one variable called data in every api?
-        return $this->sendResponse(['Task'=> TaskResource::collection($tasks)], "Projects retrived successfuly");
+        return $this->sendResponse(['Task'=> TaskResource::collection($tasks)], "Tasks retrived successfuly");
     }
 
     /**

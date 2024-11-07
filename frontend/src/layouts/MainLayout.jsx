@@ -40,7 +40,7 @@ const MainLayout = ({ toggleTheme, darkMode }) => {
 
   return (
     <>
-     <MemberSidebar/>
+      <MemberSidebar />
       <MobileSidebar
         logout={logout}
         setIsModalOpen={setIsModalOpen}
