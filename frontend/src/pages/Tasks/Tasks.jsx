@@ -1,36 +1,56 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Tasks = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = user.token;
+  const [tasks, setTasks] = useState([]);
+  const [query, setQuery] = useState("");
   const queryClient = useQueryClient();
-  const {
-    data: tasks,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["tasks"],
+  // const { data, isLoading, isError } = useQuery({
+  //   queryKey: ["tasks"],
+  //   queryFn: async () => {
+  //     const response = await axios.get("http://127.0.0.1:8000/api/tasks", {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`, // Include the Bearer token
+  //       },
+  //     });
+  //     console.log(response.data);
+  //     setTasks(response.data.data.Task);
+  //     return response.data.data.Task;
+  //   },
+  //   onSuccess: (data) => {
+  //     console.log("the data is ", data);
+  //   },
+  //   onError: (error) => {
+  //     console.log("error = ", error);
+  //     console.log("error message = ", error.message);
+  //   },
+  // });
+
+  // search functionality
+  const { data: searchtask } = useQuery({
+    queryKey: ["searchTask", query],
     queryFn: async () => {
-      const response = await axios.get("http://127.0.0.1:8000/api/tasks", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include the Bearer token
-        },
-      });
-      console.log(response.data);
-      return response.data.data.Task;
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/tasks-search",
+        {
+          params: { query },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setTasks(response.data.data.SearchedTasks);
+      return response.data.data.SearchedTasks;
     },
-    onSuccess: (data) => {
-      console.log("the data is ", data);
-    },
-    onError: (error) => {
-      console.log("error = ", error);
-      console.log("error message = ", error.message);
-    },
+    refetchOnWindowFocus: true,
+    keepPreviousData: true,
   });
 
   const deleteMutation = useMutation({
@@ -231,6 +251,10 @@ const Tasks = () => {
             </div>
             <input
               type="text"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+              }}
               id="table-search"
               className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search for items"

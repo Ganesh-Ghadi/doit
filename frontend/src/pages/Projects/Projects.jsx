@@ -1,37 +1,37 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Projects = () => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const [projects, setProjects] = useState([]);
+  const [query, setQuery] = useState("");
   const token = user.token;
   const queryClient = useQueryClient();
-  const {
-    data: projects,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["projects"],
-    queryFn: async () => {
-      const response = await axios.get("http://127.0.0.1:8000/api/projects", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include the Bearer token
-        },
-      });
-      console.log(response.data);
-      return response.data.data.Projects;
-    },
-    onSuccess: (data) => {
-      console.log("the data is ", data);
-    },
-    onError: (error) => {
-      console.log("error = ", error);
-      console.log("error message = ", error.message);
-    },
-  });
+  //i am using search so no need or this now
+  // const { data, isLoading, isError } = useQuery({
+  //   queryKey: ["projects"],
+  //   queryFn: async () => {
+  //     const response = await axios.get("http://127.0.0.1:8000/api/projects", {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`, // Include the Bearer token
+  //       },
+  //     });
+  //     console.log(response.data);
+  //     setProjects(response.data.data.Projects);
+  //     return response.data.data.Projects;
+  //   },
+  //   onSuccess: (data) => {
+  //     console.log("the data is ", data);
+  //   },
+  //   onError: (error) => {
+  //     console.log("error = ", error);
+  //     console.log("error message = ", error.message);
+  //   },
+  // });
 
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
@@ -59,6 +59,28 @@ const Projects = () => {
   const deleteProject = (id) => {
     deleteMutation.mutate(id);
   };
+
+  // search functionalilty
+  const { data: search } = useQuery({
+    queryKey: ["search", query],
+    queryFn: async () => {
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/projects_search",
+        {
+          params: { query },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setProjects(response?.data?.data?.SearchedProjects);
+      return response.data.data.SearchedProjects;
+    },
+    // enabled: query.length > 0, // Only trigger query when there is a query
+    refetchOnWindowFocus: false,
+    keepPreviousData: true,
+  });
 
   return (
     <>
@@ -233,7 +255,9 @@ const Projects = () => {
               type="text"
               id="table-search"
               className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Search for items"
+              placeholder="Search..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
           </div>
         </div>

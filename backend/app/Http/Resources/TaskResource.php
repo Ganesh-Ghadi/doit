@@ -31,7 +31,7 @@ class TaskResource extends JsonResource
             'end_date' => $this->end_date ? $this->end_date->format("Y-m-d") : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            "assign_to" => $users->pluck("name"),
+            "assign_to" => $users,
             'project' => $projects ? [$projects->name]: [null],
             'comments' => $comments ? $comments : [null],
         ];

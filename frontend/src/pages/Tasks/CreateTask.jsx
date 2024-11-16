@@ -1,35 +1,61 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import axios from 'axios';
-import { IoIosAddCircleOutline } from 'react-icons/io';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { openSidebar } from '../../features/MemberSidebarSlice/MemberSidebarSlice';
-import { FaRegUser } from 'react-icons/fa';
-import { RxCross1 } from 'react-icons/rx';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+import axios from "axios";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { openSidebar } from "../../features/MemberSidebarSlice/MemberSidebarSlice";
+import { FaRegUser } from "react-icons/fa";
+import { RxCross1 } from "react-icons/rx";
 import {
   removeMembers,
   refreshMembers,
-} from '../../features/MemberSlice/memberSlice';
+} from "../../features/MemberSlice/memberSlice";
 
 const CreateTask = () => {
   const dispatch = useDispatch();
   const { members } = useSelector((store) => store.Member);
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
   const token = user.token;
   const navigate = useNavigate();
   const formSchema = z.object({
-    title: z.string().nonempty('title field is required'),
+    title: z.string().nonempty("title field is required"),
     description: z.string().optional(),
     priority: z.string().optional(),
-    weight: z.number().optional(),
+    weight: z.string().optional(),
     status: z.string().optional(),
+    start_date: z.string().nonempty("Start date is required"),
+    end_date: z.string().nonempty("End date is required"),
+    project_id: z.string().nullable().optional(),
   });
 
+  const {
+    data: projects,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const response = await axios.get("http://127.0.0.1:8000/api/projects", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data.data.Projects;
+    },
+    onSuccess: (data) => {
+      console.log("this is data", data);
+    },
+    onError: (error) => {
+      console.log("this is error", error);
+    },
+  });
+  console.log("this is projext ", projects);
   const {
     control,
     handleSubmit,
@@ -40,11 +66,11 @@ const CreateTask = () => {
   const storeMutation = useMutation({
     mutationFn: async (data) => {
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/tasks',
+        "http://127.0.0.1:8000/api/tasks",
         data,
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, // Include the Bearer token
           },
         }
@@ -52,13 +78,13 @@ const CreateTask = () => {
       return response.data;
     },
     onSuccess: (data) => {
-      console.log('task created', data);
+      console.log("task created", data);
       dispatch(refreshMembers());
-      toast.success('Task Added Successfully');
-      navigate('/tasks');
+      toast.success("Task Added Successfully");
+      navigate("/tasks");
     },
     onError: (error) => {
-      console.log('got error ', error);
+      console.log("got error ", error);
     },
   });
 
@@ -202,7 +228,7 @@ const CreateTask = () => {
                 Status
               </label>
               <Controller
-                name="priority"
+                name="status"
                 control={control}
                 render={({ field }) => (
                   <select
@@ -215,14 +241,16 @@ const CreateTask = () => {
                   </select>
                 )}
               />
-              {errors.priority && (
+              {errors.status && (
                 <p className="text-red-500 mt-2 text-sm">
-                  {errors.priority.message}
+                  {errors.status.message}
                 </p>
               )}
             </div>
           </div>
-          <div className="flex gap-5">
+
+          <div className="flex gap-5 justify-evenly items-center w-full">
+            {/* <div className="grid gap-5 w-full grid-cols-4"> */}
             <div class="mb-6 w-full">
               <label
                 for="default-input"
@@ -275,6 +303,42 @@ const CreateTask = () => {
               )}
             </div>
           </div>
+          <div class="mb-6 md:w-[50%]">
+            <label
+              for="default-input"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Assign Task to Project
+            </label>
+            <Controller
+              name="project_id"
+              control={control}
+              render={({ field }) => (
+                <select
+                  {...field}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                >
+                  <option value="">select project</option>
+                  {projects &&
+                    projects.length > 0 &&
+                    projects.map((project) => (
+                      <option value={project.id}>{project.name}</option>
+                    ))}
+                  {isLoading && <option>Loading...</option>}
+                  {isError && (
+                    <option className="text-red-500">
+                      Error fetching project
+                    </option>
+                  )}
+                </select>
+              )}
+            />
+            {errors.project_id && (
+              <p className="text-red-500 mt-2 text-sm">
+                {errors.project_id.message}
+              </p>
+            )}
+          </div>
           <div class="mb-6">
             <label
               for="default-input"
@@ -295,12 +359,6 @@ const CreateTask = () => {
           </div>
 
           <div className="l">
-            <label
-              for="default-input"
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Members added
-            </label>
             {members.map((member) => (
               <div class="mb-6 w-[90%] rounded-lg border-2 border-black flex justify-between border px-3 py-5 items-center">
                 <button

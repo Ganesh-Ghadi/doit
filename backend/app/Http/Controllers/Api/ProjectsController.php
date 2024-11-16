@@ -110,8 +110,7 @@ class ProjectsController extends BaseController
     public function search(Request $request): JsonResponse
     {
         // Retrieve query parameters
-        $name = $request->query('name');
-        $description = $request->query('description');
+        $searchedVal = $request->query('query');
       
 
         $authUser = auth()->user()->roles->pluck("name")->first();
@@ -124,14 +123,10 @@ class ProjectsController extends BaseController
         }
        
 
-        // Apply filters based on query parameters priority, weight status, start date and enddate
-        if ($name) {
-            $query->where('name', 'like', "%$name%");
-        }
-
-        if ($description) {
-            $query->where('description', 'like', "%$description%");
-        }
+        $query->where(function ($query) use ($searchedVal) {
+            $query->where('name', 'like', "%$searchedVal%")
+                  ->orWhere('description', 'like', "%$searchedVal%");
+        });
 
 
         // Execute query and get results

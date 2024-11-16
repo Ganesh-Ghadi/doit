@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Sidebar from "../components/SIdebar/Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import MobileSidebar from "../components/SIdebar/MobileSidebar";
@@ -14,6 +14,7 @@ const MainLayout = ({ toggleTheme, darkMode }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
   const token = user.token;
+  const modalRef = useRef(null); // Create a ref for the sidebar
   const navigate = useNavigate();
   const logout = async () => {
     try {
@@ -37,6 +38,24 @@ const MainLayout = ({ toggleTheme, darkMode }) => {
       }
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsModalOpen(false);
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isModalOpen]);
 
   return (
     <>
@@ -66,7 +85,7 @@ const MainLayout = ({ toggleTheme, darkMode }) => {
             </button>
           </div>
           {isModalOpen && (
-            <div className="md:block hidden">
+            <div ref={modalRef} className="md:block hidden">
               <div className="border text-dark-purple dark:text-white dark:text-white border rounded bg-slate-50 dark:bg-gray-900 w-48 h-16 absolute top-20 right-10 z-50">
                 <button
                   onClick={() => {

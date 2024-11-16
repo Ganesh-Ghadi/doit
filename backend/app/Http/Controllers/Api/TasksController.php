@@ -85,7 +85,7 @@ class TasksController extends BaseController
             return $this->sendError("Task not found", ['error'=>'Task not found']);
         }
 
-        // $task->project_id = $request->input('project_id');
+        $task->project_id = $request->input('project_id');
         $task->title = $request->input('title');
         $task->description = $request->input("description");
         $task->priority = $request->input('priority'); 
@@ -158,11 +158,7 @@ class TasksController extends BaseController
     public function search(Request $request)
     {
         // Retrieve query parameters
-        $title = $request->query('title');
-        $description = $request->query('description');
-        $priority = $request->query('priority');
-        $weight = $request->query('weight');
-        $status = $request->query('status');
+        $searchedVal = $request->query('query');
 
         $authUser = auth()->user()->roles->pluck("name")->first();
         if($authUser == "admin"){
@@ -175,25 +171,14 @@ class TasksController extends BaseController
        
 
         // Apply filters based on query parameters priority, weight status, start date and enddate
-        if ($title) {
-            $query->where('title', 'like', "%$title%");
-        }
-
-        if ($description) {
-            $query->where('description', 'like', "%$description%");
-        }
-
-        if ($priority) {
-            $query->where('priority', 'like', "%$priority%");
-        }
-
-        if ($weight) {
-            $query->where('weight', 'like', "%$weight%");
-        }
-          
-        if ($status) {
-            $query->where('status', 'like', "%$status%");
-        }
+      
+           $query->where(function ($query) use ($searchedVal){
+             $query->where('title', 'like', "%$searchedVal%")
+             ->orWhere('description', 'like', "%$searchedVal%")
+             ->orWhere('priority', 'like', "%$searchedVal%")
+             ->orWhere('weight', 'like', "%$searchedVal%")
+             ->orWhere('status', 'like', "%$searchedVal%");
+           });
 
         // Execute query and get results
         $SearchedTask = $query->get();
